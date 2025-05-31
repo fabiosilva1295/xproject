@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isEmail, isUUID } from 'class-validator';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,9 +13,8 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(data: CreateUserDto) {
-    const user = this.userRepository.create(data);
-
+  async create(data: CreateUserDto): Promise<User> {
+    const user: User = this.userRepository.create(data);
     try {
       return await this.userRepository.save(user);
     } catch (error) {
@@ -29,8 +29,13 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOneBy({ id });
+  async findOne(indentifier: string):  Promise<User | null>{
+    const where: Object[] = [];
+
+    if(isUUID(indentifier)) where.push({id: indentifier});
+    if(isEmail(indentifier)) where.push({email: indentifier});
+    
+    return await this.userRepository.findOne({where});
   }
 
   async update(id: string, data: UpdateUserDto) {
