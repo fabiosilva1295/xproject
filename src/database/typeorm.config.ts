@@ -10,5 +10,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   database: 'xproject',
   entities,
   synchronize: true, // ⚠️ usar apenas em desenvolvimento
-  autoLoadEntities: true,
 };
