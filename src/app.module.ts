@@ -12,7 +12,8 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     DatabaseModule, 
-    UserModule, AuthModule
+    UserModule, 
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

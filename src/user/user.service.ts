@@ -34,7 +34,7 @@ export class UserService {
 
     if(isUUID(indentifier)) where.push({id: indentifier});
     if(isEmail(indentifier)) where.push({email: indentifier});
-    
+
     return await this.userRepository.findOne({where});
   }
 

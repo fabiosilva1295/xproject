@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { UnauthorizedError } from 'src/auth/errors/unauthorized.error';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { AuthDto } from './dto/auth.dto';
+import { UserPayload } from './models/user-payload.interface';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
   ){}
 
-  login(createAuthDto: AuthDto) {
-    return 'Login its works';
+  login(user: User) {
+    const payload: UserPayload = {
+      sub: user.id, 
+      email: user.email, 
+      name: user.name
+    }
+    return this.jwtService.sign(payload);
   }
 
   async validateUser(login: string, password: string): Promise<any> {
@@ -23,7 +31,7 @@ export class AuthService {
       return response;
     }
 
-    return null
+    throw new UnauthorizedError('Usuário ou senha inválidos')
   }
 
   async validPassword(user: User, password: string): Promise<boolean> {
