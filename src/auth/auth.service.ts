@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UnauthorizedError } from 'src/auth/errors/unauthorized.error';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import { JwtToken } from './models/jwt-token.interface';
 import { UserPayload } from './models/user-payload.interface';
 
 @Injectable()
@@ -14,13 +15,15 @@ export class AuthService {
     private readonly jwtService: JwtService
   ){}
 
-  login(user: User) {
+  login(user: User): JwtToken {
     const payload: UserPayload = {
       sub: user.id, 
       email: user.email, 
       name: user.name
     }
-    return this.jwtService.sign(payload);
+    return {
+      accessToken: this.jwtService.sign(payload)
+    }
   }
 
   async validateUser(login: string, password: string): Promise<any> {
