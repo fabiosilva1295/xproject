@@ -21,20 +21,21 @@ export class AuthService {
       email: user.email, 
       name: user.name
     }
+    
     return {
       accessToken: this.jwtService.sign(payload)
     }
   }
 
-  async validateUser(login: string, password: string): Promise<any> {
+  async validateUser(login: string, password: string): Promise<User> {
     const user: User | null = await this.userService.findOne(login);
 
     if(user && await this.validPassword(user, password)){
       const {password: _, ...response} = user;
-      return response;
+      return response as User;
     }
 
-    throw new UnauthorizedError('Usuário ou senha inválidos')
+    throw new UnauthorizedError('Usuário ou senha inválidos');
   }
 
   async validPassword(user: User, password: string): Promise<boolean> {
